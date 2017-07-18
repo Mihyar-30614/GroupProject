@@ -218,7 +218,8 @@ public class AthleteHeartRateActivity extends AppCompatActivity implements Servi
             case PRESSURE:
                 break;
             case HEARTRATE:
-               heartrateCurrent.setText(data.toString());
+                heartrateCurrent.setText(data.toString());
+                firebaseReference.setValue(data.toString());
                 break;
             case LIGHT:
                 break;
