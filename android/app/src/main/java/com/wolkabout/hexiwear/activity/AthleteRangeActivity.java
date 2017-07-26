@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.wolkabout.hexiwear.HexiwearApplication;
 import com.wolkabout.hexiwear.R;
 
 /**
@@ -17,10 +18,21 @@ import com.wolkabout.hexiwear.R;
  * @author Scott Martell, Jenna McNeil
  */
 public class AthleteRangeActivity extends AppCompatActivity{
-    int stepRangeLow = 2000;
-    int stepRangeHigh = 10000;
-    int hrRangeLow = 80;
-    int hrRangeHigh = 120;
+    int stepRangeLow;
+    int stepRangeHigh;
+    int hrRangeLow;
+    int hrRangeHigh;
+    private Athlete person;
+    private HexiwearApplication appState;
+    private EditText stepLow;
+    private EditText stepHigh;
+    private EditText hrLow;
+    private EditText hrHigh;
+    private Button stepEnter;
+    private Button hrEnter;
+    private Button rangeBack;
+    private TextView hrSetRange;
+    private TextView stepSetRange;
 
     /**
      * This method creates the athlete range activity ui.
@@ -30,66 +42,24 @@ public class AthleteRangeActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_athlete_range);
+        person = (Athlete)getIntent().getSerializableExtra("Athlete");
+        appState = ((HexiwearApplication) getApplicationContext());
+
+        stepRangeLow = Integer.parseInt(person.stepLow);
+        stepRangeHigh = Integer.parseInt(person.stepHigh);
+        hrRangeLow = Integer.parseInt(person.hrLow);
+        hrRangeHigh = Integer.parseInt(person.hrHigh);
 
         //initializing ui elements
-        final EditText stepLow = (EditText) findViewById(R.id.stepLow);
-        final EditText stepHigh = (EditText) findViewById(R.id.stepHigh);
-        final EditText hrLow = (EditText) findViewById(R.id.hrLow);
-        final EditText hrHigh = (EditText) findViewById(R.id.hrHigh);
-        final Button stepEnter = (Button) findViewById(R.id.stepEnter);
-        final Button hrEnter = (Button) findViewById(R.id.hrEnter);
-        final Button rangeBack = (Button) findViewById(R.id.rangeBack);
-        final TextView hrSetRange = (TextView) findViewById(R.id.hrSetRange);
-        final TextView stepSetRange = (TextView) findViewById(R.id.stepSetRange);
-
-        stepEnter.setOnClickListener(new View.OnClickListener(){
-            /**
-             * On click sets the step ranges or lets the user know the range is invalid.
-             * @param view sets the ui.
-             */
-            public void onClick(View view){
-                stepRangeLow = Integer.parseInt(stepLow.getText().toString());
-                stepRangeHigh = Integer.parseInt(stepHigh.getText().toString());
-                if(stepRangeLow > stepRangeHigh){
-                    stepSetRange.setText("Steps: Invalid range.");
-                }
-                else if(stepRangeLow == 0 && stepRangeHigh == 0){
-                    stepSetRange.setText("Steps: No range set.");
-                }
-                else{
-                    stepSetRange.setText("Steps: "+stepRangeLow+" to "+stepRangeHigh+".");
-                }
-            }
-        });
-        hrEnter.setOnClickListener(new View.OnClickListener(){
-            /**
-             * On click sets the heart rate ranges or lets the user know the range is invalid.
-             * @param view sets the ui.
-             */
-            public void onClick(View view){
-                hrRangeLow = Integer.parseInt(hrLow.getText().toString());
-                hrRangeHigh = Integer.parseInt(hrHigh.getText().toString());
-                if(hrRangeLow > hrRangeHigh){
-                    hrSetRange.setText("Heart Rate: Invalid range.");
-                }
-                else if(hrRangeLow == 0 && hrRangeHigh == 0){
-                    hrSetRange.setText("Heart Rate: No range set.");
-                }
-                else{
-                    hrSetRange.setText("Heart Rate: "+hrRangeLow+" to "+hrRangeHigh+".");
-                }
-            }
-        });
-        rangeBack.setOnClickListener(new View.OnClickListener(){
-            /**
-             * On click opens the Athlete activity ui.
-             * @param view sets the ui.
-             */
-            public void onClick(View view){
-                Intent athlete = new Intent(view.getContext(), AthleteActivity.class);
-                startActivityForResult(athlete, 0);
-            }
-        });
+        stepLow = (EditText) findViewById(R.id.stepLow);
+        stepHigh = (EditText) findViewById(R.id.stepHigh);
+        hrLow = (EditText) findViewById(R.id.hrLow);
+        hrHigh = (EditText) findViewById(R.id.hrHigh);
+        stepEnter = (Button) findViewById(R.id.stepEnter);
+        hrEnter = (Button) findViewById(R.id.hrEnter);
+        rangeBack = (Button) findViewById(R.id.rangeBack);
+        hrSetRange = (TextView) findViewById(R.id.hrSetRange);
+        stepSetRange = (TextView) findViewById(R.id.stepSetRange);
 
         //checks the initial values for stepRangeLow and stepRangeHigh
         if(stepRangeLow > stepRangeHigh){
@@ -112,6 +82,58 @@ public class AthleteRangeActivity extends AppCompatActivity{
         else{
             hrSetRange.setText("Heart Rate: "+hrRangeLow+" to "+hrRangeHigh+".");
         }
+    }
+
+    /**
+     * On click sets the step ranges or shows that the entered values are invalid.
+     * @param view sets the ui.
+     */
+    public void enterStepRange(View view){
+        person.stepLow = stepLow.getText().toString();
+        person.stepHigh = stepHigh.getText().toString();
+        stepRangeLow = Integer.parseInt(stepLow.getText().toString());
+        stepRangeHigh = Integer.parseInt(stepHigh.getText().toString());
+        if(stepRangeLow > stepRangeHigh){
+            stepSetRange.setText("Steps: Invalid range.");
+        }
+        else if(stepRangeLow == 0 && stepRangeHigh == 0){
+            stepSetRange.setText("Steps: No range set.");
+        }
+        else{
+            stepSetRange.setText("Steps: "+stepRangeLow+" to "+stepRangeHigh+".");
+        }
+        appState.firebaseReference.child(person.uid).setValue(person);
+    }
+
+    /**
+     * On click sets the heart rate ranges or lets the user know the range is invalid.
+     * @param view sets the ui.
+     */
+    public void enterHrRange(View view){
+        person.hrLow = hrLow.getText().toString();
+        person.hrHigh = hrHigh.getText().toString();
+        hrRangeLow = Integer.parseInt(hrLow.getText().toString());
+        hrRangeHigh = Integer.parseInt(hrHigh.getText().toString());
+        if(hrRangeLow > hrRangeHigh){
+            hrSetRange.setText("Heart Rate: Invalid range.");
+        }
+        else if(hrRangeLow == 0 && hrRangeHigh == 0){
+            hrSetRange.setText("Heart Rate: No range set.");
+        }
+        else{
+            hrSetRange.setText("Heart Rate: "+hrRangeLow+" to "+hrRangeHigh+".");
+        }
+        appState.firebaseReference.child(person.uid).setValue(person);
+    }
+
+    /**
+     * On click opens the Athlete activity ui.
+     * @param view sets the ui.
+     */
+    public void rangeBack(View view){
+        Intent athlete = new Intent(this, AthleteActivity.class);
+        athlete.putExtra("Athlete", person);
+        startActivity(athlete);
     }
 
     /**
