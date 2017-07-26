@@ -25,6 +25,7 @@ public class AthleteActivity extends AppCompatActivity{
     private Button athleteStep;
     private Button athleteHr;
     private Button athleteRange;
+    private Athlete person;
     public HexiwearApplication context;
     public BluetoothDevice currentDevice;
     public BluetoothDeviceWrapper wrapper;
@@ -40,7 +41,7 @@ public class AthleteActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_athlete);
-
+        person = (Athlete)getIntent().getSerializableExtra("Athlete");
         context = (HexiwearApplication)getApplicationContext();
 
         //initializing ui elements
@@ -82,6 +83,7 @@ public class AthleteActivity extends AppCompatActivity{
      */
     public void showAthleteRangeActivity(View view){
         Intent athleteRangeScreen = new Intent(this, AthleteRangeActivity.class);
+        athleteRangeScreen.putExtra("Athlete", person);
         startActivity(athleteRangeScreen);
     }
 
