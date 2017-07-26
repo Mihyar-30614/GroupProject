@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wolkabout.hexiwear.HexiwearApplication;
 import com.wolkabout.hexiwear.R;
 import com.wolkabout.hexiwear.model.Characteristic;
 import com.wolkabout.hexiwear.model.HexiwearDevice;
@@ -84,6 +85,9 @@ public class AthleteHeartRateActivity extends AppCompatActivity implements Servi
     private boolean isBound;
     private Mode mode = Mode.IDLE;
     private boolean shouldUnpair;
+    private Athlete person;
+    private HexiwearApplication appState;
+    public int heartRate;
 
     private DatabaseReference firebaseReference;
     private FirebaseDatabase firebaseDBInstance;
@@ -96,7 +100,7 @@ public class AthleteHeartRateActivity extends AppCompatActivity implements Servi
         }
         isBound = bindService(BluetoothService_.intent(this).get(), this, BIND_AUTO_CREATE);
     }
-/*Breaking here for some reason*/
+
     @AfterInject
     void startFirebase(){
         firebaseDBInstance = FirebaseDatabase.getInstance();
@@ -218,8 +222,11 @@ public class AthleteHeartRateActivity extends AppCompatActivity implements Servi
             case PRESSURE:
                 break;
             case HEARTRATE:
+                person = (Athlete)getIntent().getSerializableExtra("Athlete");
+                appState = ((HexiwearApplication) getApplicationContext());
+                heartRate = Integer.parseInt(person.heartRate);
                 heartrateCurrent.setText(data.toString());
-                firebaseReference.setValue(data.toString());
+//                firebaseReference.setValue(data.toString());
                 break;
             case LIGHT:
                 break;
