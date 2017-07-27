@@ -222,10 +222,9 @@ public class AthleteHeartRateActivity extends AppCompatActivity implements Servi
             case PRESSURE:
                 break;
             case HEARTRATE:
-                person = (Athlete)getIntent().getSerializableExtra("Athlete");
-                appState = ((HexiwearApplication) getApplicationContext());
-                heartRate = Integer.parseInt(person.heartRate);
-                heartrateCurrent.setText(data.toString());
+//                person = (Athlete)getIntent().getSerializableExtra("Athlete");
+//                appState = ((HexiwearApplication) getApplicationContext());
+                heartrateCurrent.setText("Heart rate is: "+data.toString()+".");
 //                firebaseReference.setValue(data.toString());
                 break;
             case LIGHT:

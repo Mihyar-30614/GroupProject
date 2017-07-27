@@ -221,8 +221,8 @@ public class AthleteStepsActivity extends AppCompatActivity implements ServiceCo
             case LIGHT:
                 break;
             case STEPS:
-                stepsToday.setText(data.toString());
-                firebaseReference.setValue(data.toString());
+                stepsToday.setText("You've Walked "+data.toString()+" Step(s).");
+//                firebaseReference.setValue(data.toString());
                 break;
             case CALORIES:
                 break;
